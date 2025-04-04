@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        background-color: #141414;
+        color: #fff;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        z-index: 100;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0.7) 0%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        transition: background-color 0.4s;
+      }
+
+      .navbar.scrolled {
+        background-color: #141414;
+      }
+
+      .navbar-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo {
+        height: 30px;
+        margin-right: 25px;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+      }
+
+      .nav-links li {
+        margin-right: 15px;
+      }
+
+      .nav-links a {
+        color: #e5e5e5;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: #b3b3b3;
+      }
+
+      .navbar-right {
+        display: flex;
+        align-items: center;
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+      }
+
+      .search-box i {
+        margin-right: 10px;
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .search-box input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        width: 0;
+        transition: width 0.3s;
+        padding: 5px;
+        border-bottom: 1px solid transparent;
+      }
+
+      .search-box.active input {
+        width: 200px;
+        border-bottom: 1px solid #fff;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .profile img {
+        border-radius: 4px;
+        margin-right: 5px;
+      }
+
+      .hero {
+        height: 100vh;
+        background: linear-gradient(to top, #141414 0%, transparent 50%),
+          url("https://image.tmdb.org/t/p/original/56v2KjBlU4XaOv9rVYEQypROD7P.jpg")
+            no-repeat center center/cover;
+        display: flex;
+        align-items: center;
+        padding: 0 60px;
+        margin-top: -80px;
+      }
+
+      .hero-content {
+        max-width: 600px;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+      }
+
+      .hero-meta {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        font-size: 14px;
+      }
+
+      .hero-meta span {
+        margin-right: 15px;
+      }
+
+      .match {
+        color: #46d369;
+        font-weight: bold;
+      }
+
+      .age {
+        padding: 1px 3px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 2px;
+      }
+
+      .hero-description {
+        margin-bottom: 20px;
+        line-height: 1.5;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.45);
+      }
+
+      .hero-buttons {
+        display: flex;
+      }
+
+      .hero-buttons button {
+        display: flex;
+        align-items: center;
+        padding: 8px 25px;
+        margin-right: 10px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .hero-buttons button:hover {
+        opacity: 0.8;
+      }
+
+      .play-btn {
+        background-color: #fff;
+        color: #000;
+      }
+
+      .info-btn {
+        background-color: rgba(109, 109, 110, 0.7);
+        color: #fff;
+      }
+
+      .info-btn i {
+        margin-right: 8px;
+      }
+
+      .content {
+        padding: 0 60px;
+        margin-top: -150px;
+        position: relative;
+        z-index: 10;
+      }
+
+      .row {
+        margin-bottom: 40px;
+      }
+
+      .row-title {
+        font-size: 1.4rem;
+        margin-bottom: 15px;
+      }
+
+      .row-content {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 20px;
+      }
+
+      .row-content::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      .row-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .row-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+      }
+
+      .movie-card {
+        flex: 0 0 220px;
+        margin-right: 10px;
+        position: relative;
+        transition: transform 0.3s;
+        cursor: pointer;
+      }
+
+      .movie-card:hover {
+        transform: scale(1.1);
+        z-index: 100;
+      }
+
+      .movie-card img {
+        width: 100%;
+        border-radius: 4px;
+      }
+
+      .movie-info {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, #141414, transparent);
+        padding: 20px 10px 10px;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .movie-card:hover .movie-info {
+        opacity: 1;
+      }
+
+      .movie-controls {
+        display: flex;
+        margin-bottom: 10px;
+      }
+
+      .movie-controls button {
+        background-color: rgba(42, 42, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .movie-controls button:hover {
+        border-color: white;
+      }
+
+      .movie-info h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      .movie-meta {
+        display: flex;
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .movie-meta span {
+        margin-right: 10px;
+      }
+
+      .genres {
+        display: flex;
+        font-size: 11px;
+      }
+
+      .genres span {
+        margin-right: 5px;
+      }
+
+      .video-player {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .video-container {
+        width: 80%;
+        position: relative;
+      }
+
+      .video-container video {
+        width: 100%;
+      }
+
+      .close-player {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          padding: 15px;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          padding: 0 20px;
+        }
+
+        .hero h1 {
+          font-size: 2rem;
+        }
+
+        .content {
+          padding: 0 20px;
+        }
+
+        .movie-card {
+          flex: 0 0 150px;
+        }
+      }
+    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Netflix +</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="navbar">
+      <div class="navbar-left">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg"
+          alt="Netflix Logo"
+          class="logo"
+        />
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">TV Shows</a></li>
+          <li><a href="#">Movies</a></li>
+          <li><a href="#">New & Popular</a></li>
+          <li><a href="#">My List</a></li>
+        </ul>
+      </div>
+      <div class="navbar-right">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search" />
+        </div>
+        <div class="profile">
+          <img src="rok.jpg" alt="Profile" />
+          <i class="fas fa-caret-down"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="hero-content">
+        <h1>Stranger Things</h1>
+        <div class="hero-meta">
+          <span class="match">98% Match</span>
+          <span class="year">2016</span>
+          <span class="age">TV-14</span>
+          <span class="seasons">4 Seasons</span>
+        </div>
+        <p class="hero-description">
+          When a young boy vanishes, a small town uncovers a mystery involving
+          secret experiments, terrifying supernatural forces and one strange
+          little girl.
+        </p>
+        <div class="hero-buttons">
+          <button class="play-btn"><i class="fas fa-play"></i> Play</button>
+          <button class="info-btn">
+            <i class="fas fa-info-circle"></i> More Info
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="row">
+        <h2 class="row-title">Popular on Netflix</h2>
+        <div class="row-content">
+          <div class="movie-card" data-id="1">
+            <img
+              src="https://image.tmdb.org/t/p/w500/9dKCd55IuTT5QRs989m9Qlb7d2B.jpg"
+              alt="Movie"
+            />
+            <div class="movie-info">
+              <div class="movie-controls">
+                <button class="play-small"><i class="fas fa-play"></i></button>
+                <button class="add-list"><i class="fas fa-plus"></i></button>
+                <button class="like"><i class="fas fa-thumbs-up"></i></button>
+                <button class="dislike">
+                  <i class="fas fa-thumbs-down"></i>
+                </button>
+              </div>
+              <h3>Stranger Things</h3>
+              <div class="movie-meta">
+                <span class="match">98% Match</span>
+                <span class="age">TV-14</span>
+                <span class="seasons">4 Seasons</span>
+              </div>
+              <div class="genres">
+                <span>Sci-Fi</span>
+                <span>Horror</span>
+                <span>Drama</span>
+              </div>
+            </div>
+          </div>
+          <!-- More movie cards would go here -->
+        </div>
+      </div>
+
+      <div class="row">
+        <h2 class="row-title">Trending Now</h2>
+        <div class="row-content">
+          <!-- Movie cards would go here -->
+        </div>
+      </div>
+
+      <div class="row">
+        <h2 class="row-title">Continue Watching</h2>
+        <div class="row-content">
+          <!-- Movie cards would go here -->
+        </div>
+      </div>
+    </div>
+
+    <div class="video-player hidden">
+      <div class="video-container">
+        <video id="netflix-video" controls>
+          <source
+            src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <button class="close-player"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Navbar scroll effect
+        const navbar = document.querySelector(".navbar");
+        window.addEventListener("scroll", function () {
+          if (window.scrollY > 100) {
+            navbar.classList.add("scrolled");
+          } else {
+            navbar.classList.remove("scrolled");
+          }
+        });
+
+        // Search functionality
+        const searchIcon = document.querySelector(".search-box i");
+        const searchInput = document.querySelector(".search-box input");
+
+        searchIcon.addEventListener("click", function () {
+          document.querySelector(".search-box").classList.toggle("active");
+          if (
+            document.querySelector(".search-box").classList.contains("active")
+          ) {
+            searchInput.focus();
+          }
+        });
+
+        // Movie data (would normally come from an API)
+        const movies = [
+          {
+            id: 1,
+            title: "Stranger Things",
+            image:
+              "https://image.tmdb.org/t/p/w500/9dKCd55IuTT5QRs989m9Qlb7d2B.jpg",
+            match: "99% Match",
+            age: "TV-14",
+            seasons: "4 Seasons",
+            genres: ["Sci-Fi", "Horror", "Drama"],
+            video:
+              "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          },
+          // More movie objects would go here
+        ];
+
+        // Video player functionality
+        const videoPlayer = document.querySelector(".video-player");
+        const videoElement = document.getElementById("netflix-video");
+        const closePlayerBtn = document.querySelector(".close-player");
+        const playButtons = document.querySelectorAll(".play-btn, .play-small");
+
+        // Open video player
+        playButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            // In a real app, we'd load the specific video for the selected movie
+            videoPlayer.classList.remove("hidden");
+            videoElement.play();
+            document.body.style.overflow = "hidden";
+          });
+        });
+
+        // Close video player
+        closePlayerBtn.addEventListener("click", function () {
+          videoPlayer.classList.add("hidden");
+          videoElement.pause();
+          document.body.style.overflow = "auto";
+        });
+
+        // Movie card hover effects
+        const movieCards = document.querySelectorAll(".movie-card");
+
+        movieCards.forEach((card) => {
+          card.addEventListener("mouseenter", function () {
+            // In a real app, we might preload the video or show a preview
+          });
+        });
+
+        // Simulate loading more content when scrolling to bottom
+        window.addEventListener("scroll", function () {
+          if (
+            window.innerHeight + window.scrollY >=
+            document.body.offsetHeight - 500
+          ) {
+            // In a real app, we would fetch more content from an API
+            console.log("Load more content...");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
